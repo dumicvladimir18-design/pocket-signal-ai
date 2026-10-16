@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101a2a">
+<title>Pocket Signal AI — прототип</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#121d30;--muted:#9aabc4;--line:#263650;--green:#49d6a0;--red:#ff7485;--blue:#8bb8ff}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#101b2d,#080e18 65%);color:#f4f7ff;font:16px system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+main{max-width:620px;margin:auto;padding:18px 14px 34px}.head{display:flex;align-items:center;gap:12px;margin:8px 0 20px}.logo{width:46px;height:46px;border-radius:14px;background:#173a34;display:grid;place-items:center;color:var(--green);font-size:24px}.sub{color:var(--muted);font-size:13px}.tag{margin-left:auto;border:1px solid #466b60;color:var(--green);border-radius:99px;padding:5px 9px;font-size:12px}
+.card{background:rgba(18,29,48,.95);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 8px 28px #0002}.row{display:flex;gap:12px;align-items:center}.between{justify-content:space-between}.field{display:flex;flex-direction:column;gap:7px;flex:1;min-width:0}label{color:var(--muted);font-size:13px}select,button{font:inherit;border-radius:11px;border:1px solid var(--line);padding:12px;background:#0d1728;color:#f4f7ff;width:100%}button{background:#245b50;border-color:#347d6c;font-weight:650;cursor:pointer}button.secondary{background:#17243a;border-color:var(--line)}.big{font-size:26px;font-weight:750;letter-spacing:-.5px}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{background:#0d1728;border:1px solid var(--line);padding:13px;border-radius:14px}.call{color:var(--green)}.put{color:var(--red)}.notice{font-size:13px;line-height:1.5;color:#b9c7db;background:#18243a;border-radius:12px;padding:12px}.chart{height:165px;width:100%;display:block}.status{font-size:13px;color:var(--muted);margin-top:8px}.footer{font-size:12px;color:#8c9bb1;line-height:1.55;margin:20px 4px}
+</style>
+</head>
+<body><main>
+<div class="head"><div class="logo">↗</div><div><div style="font-weight:750;font-size:19px">Pocket Signal AI</div><div class="sub">Помощник для анализа рынка</div></div><div class="tag">ПРОТОТИП</div></div>
+<div class="card">
+<div class="row">
+<div class="field"><label for="pair">Валютная пара</label><select id="pair"><option>EUR/USD</option><option>GBP/USD</option><option>USD/JPY</option><option>AUD/USD</option><option>USD/CAD</option></select></div>
+<div class="field"><label for="tf">Таймфрейм</label><select id="tf"><option value="1">1 минута</option><option value="5">5 минут</option><option value="15">15 минут</option></select></div>
+</div>
+<div class="row" style="margin-top:12px"><div class="field"><label for="exp">Экспирация</label><select id="exp"><option>1 минута</option><option>2 минуты</option><option>3 минуты</option><option>5 минут</option></select></div><div class="field"><label for="source">Источник данных</label><select id="source"><option value="demo">Демонстрационный режим</option></select></div></div>
+</div>
+<div class="card">
+<div class="row between"><div><div class="sub">Последняя цена</div><div class="big" id="price">—</div></div><div style="text-align:right"><div class="sub">Изменение в примере</div><div id="change" style="font-weight:700">—</div></div></div>
+<svg class="chart" id="chart" viewBox="0 0 560 165" preserveAspectRatio="none" aria-label="Демонстрационный график"></svg>
+<div class="status" id="chartstatus">Данные не загружены</div>
+</div>
+<div class="grid">
+<div class="metric"><div class="sub">Направление</div><div class="big" id="signal">—</div><div class="sub" id="signaldesc">Нужны рыночные данные</div></div>
+<div class="metric"><div class="sub">Уверенность</div><div class="big" id="confidence">—</div><div class="sub">Не является вероятностью выигрыша</div></div>
+</div>
+<div class="card">
+<div style="font-weight:700;margin-bottom:8px">Анализ</div><div id="analysis" class="muted" style="line-height:1.5">Нажми «Проверить демонстрацию», чтобы увидеть пример работы интерфейса. Примерные значения не являются текущими котировками.</div>
+<div style="height:12px"></div><button id="analyze">Проверить демонстрацию</button>
+<div style="height:9px"></div><button class="secondary" id="reset">Сбросить</button>
+</div>
+<div class="notice"><b>Важно:</b> сейчас это автономный демонстрационный прототип. Он не подключён к котировкам Pocket Option, не выдаёт реальные торговые сигналы и не совершает сделки. Не используй примерные данные для торговли. Для реального анализа потребуется надёжный источник рыночных свечей и проверка стратегии на истории.</div>
+<div class="footer">Прототип интерфейса для Android-браузера. Чтобы установить доступную веб-версию, файл нужно разместить на HTTPS-хостинге; после публикации можно добавить страницу на главный экран браузера.</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+function reset(){ $('price').textContent='—';$('change').textContent='—';$('signal').textContent='—';$('signal').className='big';$('signaldesc').textContent='Нужны рыночные данные';$('confidence').textContent='—';$('analysis').textContent='Нажми «Проверить демонстрацию», чтобы увидеть пример работы интерфейса. Примерные значения не являются текущими котировками.';$('chartstatus').textContent='Данные не загружены';$('chart').innerHTML='';}
+$('analyze').addEventListener('click',()=>{
+// Fixed synthetic values, explicitly labeled as mock data; no random pseudo-signal.
+const vals=[1.0812,1.0815,1.0811,1.0817,1.0814,1.0818,1.0816,1.0819,1.0815,1.0817,1.0814,1.0816];
+$('price').textContent=vals.at(-1).toFixed(4);$('change').textContent='Учебный набор';$('change').style.color='var(--blue)';
+const pts=vals.map((v,i)=>`${20+i*47},${140-(v-1.0805)*1900}`).join(' ');
+$('chart').innerHTML=`<polyline points="${pts}" fill="none" stroke="#8bb8ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+$('chartstatus').textContent='ИСКУССТВЕННЫЕ ДАННЫЕ — не реальные котировки';
+$('signal').textContent='НЕТ СИГНАЛА';$('signal').className='big';$('signaldesc').textContent='Торговый вход не рекомендован';$('confidence').textContent='—';
+$('analysis').textContent='Интерфейс работает, но загруженные числа созданы для демонстрации. Без актуальных рыночных данных и протестированной стратегии нельзя обоснованно выбрать CALL или PUT. Экспирация: '+$('exp').value+'. Пара: '+$('pair').value+'.';
+});
+$('reset').addEventListener('click',reset);reset();
+</script></body></html>
